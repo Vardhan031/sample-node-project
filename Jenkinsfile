@@ -18,6 +18,11 @@ pipeline {
                 bat 'npm test'
             }
         }
+        stage('Docker Check'){
+            steps{
+                bat 'docker --version'
+            }
+        }
             
     }
 
