@@ -1,5 +1,9 @@
 pipeline {
     agent any
+    environment{
+        IMAGE_NAME = 'sample-node-app'
+        IMAGE_TAG = '${env.BUILD_NUMBER}'
+    }
 
     stages {
         stage('Checkout Confirm') {
@@ -18,9 +22,10 @@ pipeline {
                 bat 'npm test'
             }
         }
-        stage('Docker Check'){
+        stage('Docker Build'){
             steps{
-                bat 'docker --version'
+                bat 'docker build -t %IMAGE_NAME%:%IMAGE_TAG% .'
+                bat "docker tag %IMAGE_NAME%:%IMAGE_TAG% %IMAGE_NAME%:latest"
             }
         }
             
@@ -29,6 +34,9 @@ pipeline {
     post {
         always {
             echo 'Pipeline finished'
+        }
+        success{
+            echo 'Docker Image built: ${IMAGE_NAME}:${IMAGE_TAG}'
         }
     }
 }
