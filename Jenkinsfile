@@ -1,8 +1,8 @@
 pipeline {
     agent any
     environment{
-        IMAGE_NAME = 'sample-node-app'
-        IMAGE_TAG = "${env.BUILD_NUMBER}"
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub-creds')
+        IMAGE_NAME = 'vardhanreddy24/sample-node-app'
     }
 
     stages {
@@ -22,10 +22,16 @@ pipeline {
                 bat 'npm test'
             }
         }
-        stage('Docker Build'){
+        stage('Build Docker Image'){
             steps{
-                bat 'docker build -t %IMAGE_NAME%:%IMAGE_TAG% .'
-                bat "docker tag %IMAGE_NAME%:%IMAGE_TAG% %IMAGE_NAME%:latest"
+                bat 'docker build -t %IMAGE_NAME%:%BUILD_NUMBER% -t %IMAGE_NAME%:latest .'
+            }
+        }
+        stage('Push to Docker Hub'){
+            steps{
+                bat 'echo %DOCKERHUB_CREDENTIALS_PSW% | docker login -u %DOCKERHUB_CREDENTIALS_USR% --password-stdin'
+                bat 'docker push %IMAGE_NAME%:%BUILD_NUMBER%'
+                bat 'docker push %IMAGE_NAME%:latest'
             }
         }
             
@@ -36,7 +42,7 @@ pipeline {
             echo 'Pipeline finished'
         }
         success{
-            echo 'Docker Image built: ${IMAGE_NAME}:${IMAGE_TAG}'
+            echo "Docker Image built: ${IMAGE_NAME}:${BUILD_NUMBER}"
         }
     }
 }
