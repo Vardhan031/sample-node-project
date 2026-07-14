@@ -4,7 +4,7 @@ pipeline {
         DOCKERHUB_CREDENTIALS = credentials('dockerhub-creds')
         IMAGE_NAME = 'vardhanreddy24/sample-node-app'
     }
-
+    
     stages {
         stage('Checkout Confirm') {
             steps {
