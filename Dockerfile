@@ -3,7 +3,7 @@ FROM node:24-alpine
 # Create app user and group
 RUN addgroup app && adduser -S -G app app
 
-WORKDIR /usr/src/app
+WORKDIR /usr/src/ap
 
 # Copy package files and install dependencies as root
 COPY package*.json ./
